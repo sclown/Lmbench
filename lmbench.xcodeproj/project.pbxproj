@@ -13,6 +13,20 @@
 		AD00E9D01F5488380057A812 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD00E9CE1F5488380057A812 /* Main.storyboard */; };
 		AD00E9D21F5488380057A812 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD00E9D11F5488380057A812 /* Assets.xcassets */; };
 		AD00E9D51F5488380057A812 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD00E9D31F5488380057A812 /* LaunchScreen.storyboard */; };
+		AD00E9DD1F54889F0057A812 /* lat_mem_rd.c in Sources */ = {isa = PBXBuildFile; fileRef = AD00E9DC1F54889F0057A812 /* lat_mem_rd.c */; };
+		AD00E9DF1F548BD60057A812 /* lib_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = AD00E9DE1F548BD60057A812 /* lib_mem.c */; };
+		AD00E9E11F548CC20057A812 /* lib_timing.c in Sources */ = {isa = PBXBuildFile; fileRef = AD00E9E01F548CC20057A812 /* lib_timing.c */; };
+		AD00E9E31F548E070057A812 /* getopt.c in Sources */ = {isa = PBXBuildFile; fileRef = AD00E9E21F548E070057A812 /* getopt.c */; };
+		AD00E9E51F548E8C0057A812 /* lib_sched.c in Sources */ = {isa = PBXBuildFile; fileRef = AD00E9E41F548E8C0057A812 /* lib_sched.c */; };
+		AD048BFD1F7187ED009A7750 /* lat_ctx.c in Sources */ = {isa = PBXBuildFile; fileRef = AD048BFC1F7187ED009A7750 /* lat_ctx.c */; };
+		AD9B5E101F7AD66F00BED3DE /* bw_file_rd.c in Sources */ = {isa = PBXBuildFile; fileRef = AD9B5E0F1F7AD66F00BED3DE /* bw_file_rd.c */; };
+		AD9B5E121F7BC2B200BED3DE /* lat_ops.c in Sources */ = {isa = PBXBuildFile; fileRef = AD9B5E111F7BC2B100BED3DE /* lat_ops.c */; };
+		AD9B5E141F7BCDF800BED3DE /* lat_fs.c in Sources */ = {isa = PBXBuildFile; fileRef = AD9B5E131F7BCDF700BED3DE /* lat_fs.c */; };
+		AD9B5E1B1F7D229100BED3DE /* lat_sem.c in Sources */ = {isa = PBXBuildFile; fileRef = AD9B5E1A1F7D229000BED3DE /* lat_sem.c */; };
+		ADBFF36320B1DB870026720D /* lat_array.m in Sources */ = {isa = PBXBuildFile; fileRef = ADBFF36220B1DB870026720D /* lat_array.m */; };
+		ADBFF36520B2231E0026720D /* lat_string.m in Sources */ = {isa = PBXBuildFile; fileRef = ADBFF36420B2231D0026720D /* lat_string.m */; };
+		ADDD6F221FA76C67004855AE /* lat_thread.c in Sources */ = {isa = PBXBuildFile; fileRef = ADDD6F211FA76C67004855AE /* lat_thread.c */; };
+		ADDD6F291FA8EE51004855AE /* bw_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = ADDD6F281FA8EE50004855AE /* bw_mem.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +40,21 @@
 		AD00E9D11F5488380057A812 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AD00E9D41F5488380057A812 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AD00E9D61F5488380057A812 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AD00E9DC1F54889F0057A812 /* lat_mem_rd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lat_mem_rd.c; sourceTree = "<group>"; };
+		AD00E9DE1F548BD60057A812 /* lib_mem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lib_mem.c; sourceTree = "<group>"; };
+		AD00E9E01F548CC20057A812 /* lib_timing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lib_timing.c; sourceTree = "<group>"; };
+		AD00E9E21F548E070057A812 /* getopt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = getopt.c; sourceTree = "<group>"; };
+		AD00E9E41F548E8C0057A812 /* lib_sched.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lib_sched.c; sourceTree = "<group>"; };
+		AD048BFC1F7187ED009A7750 /* lat_ctx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lat_ctx.c; sourceTree = "<group>"; };
+		AD14A71F1F9EAC5E0010462D /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		AD9B5E0F1F7AD66F00BED3DE /* bw_file_rd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bw_file_rd.c; sourceTree = "<group>"; };
+		AD9B5E111F7BC2B100BED3DE /* lat_ops.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lat_ops.c; sourceTree = "<group>"; };
+		AD9B5E131F7BCDF700BED3DE /* lat_fs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lat_fs.c; sourceTree = "<group>"; };
+		AD9B5E1A1F7D229000BED3DE /* lat_sem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lat_sem.c; sourceTree = "<group>"; };
+		ADBFF36220B1DB870026720D /* lat_array.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lat_array.m; sourceTree = "<group>"; };
+		ADBFF36420B2231D0026720D /* lat_string.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = lat_string.m; sourceTree = "<group>"; };
+		ADDD6F211FA76C67004855AE /* lat_thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lat_thread.c; sourceTree = "<group>"; };
+		ADDD6F281FA8EE50004855AE /* bw_mem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bw_mem.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +73,7 @@
 			children = (
 				AD00E9C41F5488380057A812 /* lmbench */,
 				AD00E9C31F5488370057A812 /* Products */,
+				AD14A71E1F9EAC5E0010462D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,6 +90,20 @@
 			children = (
 				AD00E9C81F5488380057A812 /* AppDelegate.h */,
 				AD00E9C91F5488380057A812 /* AppDelegate.m */,
+				AD9B5E131F7BCDF700BED3DE /* lat_fs.c */,
+				ADDD6F281FA8EE50004855AE /* bw_mem.c */,
+				ADDD6F211FA76C67004855AE /* lat_thread.c */,
+				AD9B5E1A1F7D229000BED3DE /* lat_sem.c */,
+				ADBFF36220B1DB870026720D /* lat_array.m */,
+				ADBFF36420B2231D0026720D /* lat_string.m */,
+				AD9B5E111F7BC2B100BED3DE /* lat_ops.c */,
+				AD9B5E0F1F7AD66F00BED3DE /* bw_file_rd.c */,
+				AD00E9DC1F54889F0057A812 /* lat_mem_rd.c */,
+				AD048BFC1F7187ED009A7750 /* lat_ctx.c */,
+				AD00E9E41F548E8C0057A812 /* lib_sched.c */,
+				AD00E9DE1F548BD60057A812 /* lib_mem.c */,
+				AD00E9E01F548CC20057A812 /* lib_timing.c */,
+				AD00E9E21F548E070057A812 /* getopt.c */,
 				AD00E9CB1F5488380057A812 /* ViewController.h */,
 				AD00E9CC1F5488380057A812 /* ViewController.m */,
 				AD00E9CE1F5488380057A812 /* Main.storyboard */,
@@ -77,6 +121,14 @@
 				AD00E9C61F5488380057A812 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AD14A71E1F9EAC5E0010462D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AD14A71F1F9EAC5E0010462D /* CoreImage.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -110,6 +162,7 @@
 				TargetAttributes = {
 					AD00E9C11F5488370057A812 = {
 						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = 9AZATLA397;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -150,8 +203,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD9B5E1B1F7D229100BED3DE /* lat_sem.c in Sources */,
 				AD00E9CD1F5488380057A812 /* ViewController.m in Sources */,
+				AD00E9E51F548E8C0057A812 /* lib_sched.c in Sources */,
+				ADBFF36320B1DB870026720D /* lat_array.m in Sources */,
+				ADDD6F291FA8EE51004855AE /* bw_mem.c in Sources */,
+				AD048BFD1F7187ED009A7750 /* lat_ctx.c in Sources */,
+				AD9B5E121F7BC2B200BED3DE /* lat_ops.c in Sources */,
+				ADBFF36520B2231E0026720D /* lat_string.m in Sources */,
+				AD00E9E11F548CC20057A812 /* lib_timing.c in Sources */,
+				AD00E9DD1F54889F0057A812 /* lat_mem_rd.c in Sources */,
+				ADDD6F221FA76C67004855AE /* lat_thread.c in Sources */,
+				AD00E9DF1F548BD60057A812 /* lib_mem.c in Sources */,
+				AD00E9E31F548E070057A812 /* getopt.c in Sources */,
 				AD00E9CA1F5488380057A812 /* AppDelegate.m in Sources */,
+				AD9B5E101F7AD66F00BED3DE /* bw_file_rd.c in Sources */,
+				AD9B5E141F7BCDF800BED3DE /* lat_fs.c in Sources */,
 				AD00E9C71F5488380057A812 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,6 +341,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 9AZATLA397;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					HAVE_socklen_t,
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = lmbench/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kurkin.lmbench;
@@ -285,6 +358,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 9AZATLA397;
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_socklen_t;
 				INFOPLIST_FILE = lmbench/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.kurkin.lmbench;
@@ -311,6 +386,7 @@
 				AD00E9DB1F5488380057A812 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -8,6 +8,19 @@
 
 #import "AppDelegate.h"
 
+
+void bw_file_rd(const char*);
+void lat_fs(const char*);
+void lat_ctx();
+void lat_thread();
+void lat_sem();
+void lat_mem_rd();
+void lat_ops();
+void bw_mem();
+
+void lat_array();
+void lat_string(const char*);
+
 @interface AppDelegate ()
 
 @end
@@ -17,6 +30,27 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    NSError *error;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
+    
+    NSString *unreserved = @"-._~";
+    NSMutableCharacterSet *allowed = [NSMutableCharacterSet alphanumericCharacterSet];
+    [allowed addCharactersInString:unreserved];
+    
+    __auto_type stringUrl = [@"http://icq.com/привет/урлик" stringByAddingPercentEncodingWithAllowedCharacters:allowed];
+    NSURL *url = [NSURL URLWithString:stringUrl];
+
+//    lat_mem_rd();
+//    lat_sem();
+//    lat_ctx();
+//    lat_fs([documentsDirectory UTF8String]);
+    bw_file_rd([documentsDirectory UTF8String]);
+//    lat_ops();
+//    lat_thread();
+//    bw_mem();
+//    lat_array();
+//    lat_string([documentsDirectory UTF8String]);
     return YES;
 }
 
@@ -39,6 +73,7 @@
 
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    exit(0);
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
