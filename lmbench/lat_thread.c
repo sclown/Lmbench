@@ -82,7 +82,7 @@ initialize(iter_t iterations, void* cookie)
 {
 	if (iterations) return;
     state_t * state = (state_t *)(*(void**)cookie);
-    state->data = malloc(1024*1024);
+    state->data = malloc(100*1024*1024);
     if (!state->data) {
         perror("malloc");
         exit(1);
@@ -127,5 +127,5 @@ static void
 writer(void* cookie)
 {
     state_t * state = (state_t *)(*(void**)cookie);
-    bread(state->data, 1024*1024);
+    bread(state->data, 100*1024*1024);
 }

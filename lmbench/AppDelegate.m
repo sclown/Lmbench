@@ -43,12 +43,14 @@ void lat_string(const char*);
 
 //    lat_mem_rd();
 //    lat_sem();
-//    lat_ctx();
 //    lat_fs([documentsDirectory UTF8String]);
-    bw_file_rd([documentsDirectory UTF8String]);
+//    bw_file_rd([documentsDirectory UTF8String]);
 //    lat_ops();
-//    lat_thread();
 //    bw_mem();
+
+    
+//    lat_thread();
+        lat_ctx();
 //    lat_array();
 //    lat_string([documentsDirectory UTF8String]);
     return YES;

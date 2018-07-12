@@ -162,7 +162,7 @@
 				TargetAttributes = {
 					AD00E9C11F5488370057A812 = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = 9AZATLA397;
+						DevelopmentTeam = 3PT4AZY534;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -341,7 +341,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 9AZATLA397;
+				DEVELOPMENT_TEAM = 3PT4AZY534;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					HAVE_socklen_t,
 					"DEBUG=1",
@@ -349,7 +349,7 @@
 				);
 				INFOPLIST_FILE = lmbench/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.kurkin.lmbench;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kurkin.lmbenchTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -358,11 +358,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 9AZATLA397;
+				DEVELOPMENT_TEAM = 3PT4AZY534;
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_socklen_t;
 				INFOPLIST_FILE = lmbench/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.kurkin.lmbench;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kurkin.lmbenchTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
