@@ -28,13 +28,13 @@ typedef struct _state {
     double    overhead;
     int    procs;
     pthread_t*    tids;
-    int    **p;
+    int    *p;
     void*    data;
 } state_t;
 static struct _state state;
 
 static void	doit(void* args);
-static int	create_pipes(int **p, int procs);
+static int	create_pipes(int *p, int procs);
 static int    create_daemons(state_t* pStateSrc);
 static void	initialize_overhead(iter_t iterations, void* cookie);
 static void	cleanup_overhead(iter_t iterations, void* cookie);
@@ -42,7 +42,7 @@ static void	benchmark_overhead(iter_t iterations, void* cookie);
 static void	initialize(iter_t iterations, void* cookie);
 static void	cleanup(iter_t iterations, void* cookie);
 static void	benchmark(iter_t iterations, void* cookie);
-static int process_size = 5*1024*1024;
+static int process_size = 6*1024*1024;
 
 
 void
@@ -105,12 +105,12 @@ lat_ctx()
     int cores = 2;
 	state.procs = cores;
     kdebug_signpost(1,0,0,0,0);
-    benchmp(initialize, benchmark, cleanup, 0, parallel,
+    benchmp(initialize_overhead, benchmark_overhead, cleanup_overhead, 0, parallel,
             warmup, repetitions, &state);
 	if (gettime() == 0) return;
 	state.overhead = gettime();
 	state.overhead /= get_n();
-	fprintf(stderr, "\n\"size=%dk ovr=%.2f\n", 
+	fprintf(stderr, "\n\"size=%dk ovr=%.2f mks\n", 
 		state.process_size/1024, state.overhead);
     kdebug_signpost(2,0,0,0,0);
 
@@ -123,11 +123,11 @@ lat_ctx()
 
 		time = gettime();
 		time /= get_n();
-		time /= state.procs/cores;
+		time /= state.procs;
 		time -= state.overhead;
 
-		if (time > 0.0)
-			fprintf(stderr, "%d %.2f\n", state.procs, time);
+//        if (time > 0.0)
+			fprintf(stderr, "%d %.2f mks\n", state.procs, time);
     kdebug_signpost(3,0,0,0,0);
 
 //    }
@@ -136,29 +136,20 @@ lat_ctx()
 static void
 initialize_overhead(iter_t iterations, void* cookie)
 {
-    int i;
 	int procs;
-	int* p;
 
-    kdebug_signpost_start(0,0,0,0,0);
 	if (iterations) return;
-    void* stateptr = (*(void**)cookie);
     struct _state* pStateSrc = (struct _state*)(*(void**)cookie);
     struct _state* pState = (struct _state*)malloc(sizeof(struct _state));
     *pState = *pStateSrc;
     (*(void**)cookie) = pState;
     
 	pState->tids = NULL;
-	pState->p = (int**)malloc(pState->procs * (sizeof(int*) + 2 * sizeof(int)));
+	pState->p = (int*)malloc(pState->procs * (2 * sizeof(int)));
 	pState->data = (pState->process_size > 0) ? malloc(pState->process_size) : NULL;
 	if (!pState->p || (pState->process_size > 0 && !pState->data)) {
 		perror("malloc");
 		exit(1);
-	}
-	p = (int*)&pState->p[pState->procs];
-	for (i = 0; i < pState->procs; ++i) {
-		pState->p[i] = p;
-		p += 2;
 	}
 
 	if (pState->data)
@@ -180,13 +171,12 @@ cleanup_overhead(iter_t iterations, void* cookie)
 
     struct _state* pState = (struct _state*)(*(void**)cookie);
     for (i = 0; i < pState->procs; ++i) {
-		close(pState->p[i][0]);
-		close(pState->p[i][1]);
+		close((pState->p + 2 * i)[0]);
+		close((pState->p + 2 * i)[1]);
 	}
 
 	free(pState->p);
 	if (pState->data) free(pState->data);
-    kdebug_signpost_end(0,0,0,0,0);
 
 }
 
@@ -199,11 +189,11 @@ benchmark_overhead(iter_t iterations, void* cookie)
 	int	msg = 1;
 
 	while (iterations-- > 0) {
-		if (write(pState->p[i][1], &msg, sizeof(msg)) != sizeof(msg)) {
+		if (write((pState->p + 2 * i)[1], &msg, sizeof(msg)) != sizeof(msg)) {
 			/* perror("read/write on pipe"); */
 			exit(1);				
 		}
-		if (read(pState->p[i][0], &msg, sizeof(msg)) != sizeof(msg)) {
+		if (read((pState->p + 2 * i)[0], &msg, sizeof(msg)) != sizeof(msg)) {
 			/* perror("read/write on pipe"); */
 			exit(1);
 		}
@@ -270,18 +260,20 @@ benchmark(iter_t iterations, void* cookie)
 	 * Main process - all others should be ready to roll, time the
 	 * loop.
 	 */
+    kdebug_signpost_start(0,0,0,0,0);
 	while (iterations-- > 0) {
-		if (write(pState->p[0][1], &msg, sizeof(msg)) !=
+		if (write(pState->p[1], &msg, sizeof(msg)) !=
 		    sizeof(msg)) {
 			/* perror("read/write on pipe"); */
 			exit(1);
 		}
-		if (read(pState->p[pState->procs-1][0], &msg, sizeof(msg)) != sizeof(msg)) {
+		if (read((pState->p + 2 * (pState->procs-1))[0], &msg, sizeof(msg)) != sizeof(msg)) {
 			/* perror("read/write on pipe"); */
 			exit(1);
 		}
 		bread(pState->data, pState->process_size);
 	}
+    kdebug_signpost_end(0,0,0,0,0);
 }
 
 
@@ -291,8 +283,8 @@ doit(void* args)
     state_t *stateptr = (state_t*)args;
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     int i = (int)stateptr->index;
-    int rd = stateptr->p[i-1][0];
-    int wr = stateptr->p[i][1];
+    int rd = (stateptr->p + 2 * (i - 1))[0];
+    int wr = (stateptr->p + 2 * i)[1];
     free(stateptr);
     stateptr = NULL;
 	int	msg;
@@ -311,12 +303,15 @@ doit(void* args)
 			/* perror("read/write on pipe"); */
 			break;
 		}
+        kdebug_signpost(4,0,0,0,0);
 		if (process_size)
 			bread(data, process_size);
+        kdebug_signpost(5,0,0,0,0);
 		if (write(wr, &msg, sizeof(msg)) != sizeof(msg)) {
 			/* perror("read/write on pipe"); */
 			break;
 		}
+        kdebug_signpost(6,0,0,0,0);
 	}
 //    exit(1);
 }
@@ -369,8 +364,8 @@ create_daemons(state_t* pStateSrc)
 	 * Go once around the loop to make sure that everyone is ready and
 	 * to get the token in the pipeline.
 	 */
-	if (write(pStateSrc->p[0][1], &msg, sizeof(msg)) != sizeof(msg) ||
-	    read(pStateSrc->p[pStateSrc->procs-1][0], &msg, sizeof(msg)) != sizeof(msg)) {
+	if (write(pStateSrc->p[1], &msg, sizeof(msg)) != sizeof(msg) ||
+	    read((pStateSrc->p + 2 * (pStateSrc->procs-1))[0], &msg, sizeof(msg)) != sizeof(msg)) {
 		/* perror("write/read/write on pipe"); */
 		exit(1);
 	}
@@ -378,7 +373,7 @@ create_daemons(state_t* pStateSrc)
 }
 
 static int
-create_pipes(int **p, int procs)
+create_pipes(int *p, int procs)
 {
 	int	i;
 	/*
@@ -386,7 +381,7 @@ create_pipes(int **p, int procs)
 	 */
 	morefds();
     for (i = 0; i < procs; ++i) {
-		if (pipe(p[i]) == -1) {
+		if (pipe(p + (2 * i)) == -1) {
 			return i;
 		}
 	}
