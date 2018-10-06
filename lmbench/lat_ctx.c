@@ -42,18 +42,16 @@ static void	benchmark_overhead(iter_t iterations, void* cookie);
 static void	initialize(iter_t iterations, void* cookie);
 static void	cleanup(iter_t iterations, void* cookie);
 static void	benchmark(iter_t iterations, void* cookie);
-static int process_size = 6*1024*1024;
+static int process_size = 32*1024;
 
 
 void
 lat_ctx()
 {
-	int	i, maxprocs = 16;
-	int	c;
+	int	maxprocs = 16;
 	int	parallel = 1;
 	int	warmup = 0;
 	int	repetitions = -1;
-	char *usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>] [-s kbytes] processes [processes ...]\n";
 	double	time;
 
 	/*
@@ -64,46 +62,16 @@ lat_ctx()
 		exit(1);
 	}
 
-	state.process_size = process_size;
-	state.overhead = 0.0;
-	state.tids = NULL;
+    int offset = 0;
+    for(process_size = 0*1024;process_size < 10*1024*1024; process_size+=offset) {
+        offset += 32*1024;
+    int cores = 1;
+	state.procs = cores;
+    state.process_size = process_size;
+    state.overhead = 0.0;
+    state.tids = NULL;
     state.index = 0;
 
-	/*
-	 * If they specified a context size, or parallelism level, get them.
-	 */
-//    while (( c = getopt(ac, av, "s:P:W:N:")) != EOF) {
-//        switch(c) {
-//        case 'P':
-//            parallel = atoi(optarg);
-//            if (parallel <= 0) lmbench_usage(ac, av, usage);
-//            break;
-//        case 'W':
-//            warmup = atoi(optarg);
-//            break;
-//        case 'N':
-//            repetitions = atoi(optarg);
-//            break;
-//        case 's':
-//            state.process_size = atoi(optarg) * 1024;
-//            break;
-//        default:
-//            lmbench_usage(ac, av, usage);
-//            break;
-//        }
-//    }
-//
-//    if (optind > ac - 1)
-//        lmbench_usage(ac, av, usage);
-
-	/* compute pipe + sumit overhead */
-//    for (i = optind; i < ac; ++i) {
-//        state.procs = atoi(av[i]);
-//        if (state.procs > maxprocs)
-//            maxprocs = state.procs;
-//    }
-    int cores = 2;
-	state.procs = cores;
     kdebug_signpost(1,0,0,0,0);
     benchmp(initialize_overhead, benchmark_overhead, cleanup_overhead, 0, parallel,
             warmup, repetitions, &state);
@@ -114,21 +82,23 @@ lat_ctx()
 		state.process_size/1024, state.overhead);
     kdebug_signpost(2,0,0,0,0);
 
-	/* compute the context switch cost for N processes */
-//    for (i = optind; i < ac; ++i) {
+    state.procs = maxprocs;
+    kdebug_signpost_start(6,0,0,0,6);
+    benchmp(initialize, benchmark, cleanup, 0, parallel,
+            warmup, repetitions, &state);
+    kdebug_signpost_end(6,0,0,0,6);
     
-		state.procs = maxprocs;
-		benchmp(initialize, benchmark, cleanup, 0, parallel, 
-			warmup, repetitions, &state);
-
-		time = gettime();
-		time /= get_n();
-		time /= state.procs;
-		time -= state.overhead;
-
-//        if (time > 0.0)
-			fprintf(stderr, "%d %.2f mks\n", state.procs, time);
+    time = gettime();
+    time /= get_n();
+    time /= state.procs;
+    time -= state.overhead;
+    
+    //        if (time > 0.0)
+    fprintf(stderr, "%d %.2f mks\n", state.procs, time);
     kdebug_signpost(3,0,0,0,0);
+
+    }
+
 
 //    }
 }
@@ -183,10 +153,10 @@ cleanup_overhead(iter_t iterations, void* cookie)
 static void
 benchmark_overhead(iter_t iterations, void* cookie)
 {
-//    struct _state* pState = (struct _state*)cookie;
     struct _state* pState = (struct _state*)(*(void**)cookie);
 	int	i = 0;
 	int	msg = 1;
+
 
 	while (iterations-- > 0) {
 		if (write((pState->p + 2 * i)[1], &msg, sizeof(msg)) != sizeof(msg)) {
@@ -207,6 +177,7 @@ benchmark_overhead(iter_t iterations, void* cookie)
 static void
 initialize(iter_t iterations, void* cookie)
 {
+    kdebug_signpost(7,0,0,0,7);
 	int procs;
 
 	if (iterations) return;
@@ -219,6 +190,8 @@ initialize(iter_t iterations, void* cookie)
 		exit(1);
 	bzero((void*)pState->tids, pState->procs * sizeof(pthread_t));
 	procs = create_daemons(pState);
+    kdebug_signpost(5,0,0,0,5);
+
 	if (procs < pState->procs) {
 		cleanup(0, cookie);
 		exit(1);
@@ -228,6 +201,7 @@ initialize(iter_t iterations, void* cookie)
 static void
 cleanup(iter_t iterations, void* cookie)
 {
+    kdebug_signpost(8,0,0,0,8);
 	int i;
 
 	if (iterations) return;
@@ -241,8 +215,6 @@ cleanup(iter_t iterations, void* cookie)
 		if (pState->tids[i] > 0) {
             pthread_cancel(pState->tids[i]);
             pthread_join(pState->tids[i], NULL);
-//            kill(pState->tids[i], SIGKILL);
-//            waitpid(pState->tids[i], NULL, 0);
 		}
 	}
 	if (pState->tids)
@@ -260,7 +232,7 @@ benchmark(iter_t iterations, void* cookie)
 	 * Main process - all others should be ready to roll, time the
 	 * loop.
 	 */
-    kdebug_signpost_start(0,0,0,0,0);
+    kdebug_signpost_start(9,0,0,0,9);
 	while (iterations-- > 0) {
 		if (write(pState->p[1], &msg, sizeof(msg)) !=
 		    sizeof(msg)) {
@@ -273,7 +245,7 @@ benchmark(iter_t iterations, void* cookie)
 		}
 		bread(pState->data, pState->process_size);
 	}
-    kdebug_signpost_end(0,0,0,0,0);
+    kdebug_signpost_end(9,0,0,0,9);
 }
 
 
@@ -303,7 +275,7 @@ doit(void* args)
 			/* perror("read/write on pipe"); */
 			break;
 		}
-        kdebug_signpost(4,0,0,0,0);
+        kdebug_signpost(4,0,0,0,4);
 		if (process_size)
 			bread(data, process_size);
         kdebug_signpost(5,0,0,0,0);
@@ -313,14 +285,16 @@ doit(void* args)
 		}
         kdebug_signpost(6,0,0,0,0);
 	}
-//    exit(1);
+    if (data) {
+        free(data);
+    }
 }
 
 
 static int
 create_daemons(state_t* pStateSrc)
 {
-	int	i, j;
+	int	i;
 	int	msg;
 
 	/*
@@ -340,26 +314,6 @@ create_daemons(state_t* pStateSrc)
     }
 
     
-//    handle_scheduler(benchmp_childid(), 0, procs-1);
-//         for (i = 1; i < procs; ++i) {
-//        switch (pids[i] = fork()) {
-//            case -1:    /* could not fork, out of processes? */
-//            return i;
-//
-//            case 0:    /* child */
-//            handle_scheduler(benchmp_childid(), i, procs-1);
-//            for (j = 0; j < procs; ++j) {
-//                if (j != i - 1) close(p[j][0]);
-//                if (j != i) close(p[j][1]);
-//            }
-//            doit(p[i-1][0], p[i][1], process_size);
-//            /* NOTREACHED */
-//
-//            default:    /* parent */
-//            ;
-//            }
-//    }
-
 	/*
 	 * Go once around the loop to make sure that everyone is ready and
 	 * to get the token in the pipeline.
