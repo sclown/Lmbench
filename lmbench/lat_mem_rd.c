@@ -28,60 +28,19 @@ benchmp_f    fpInit = thrash_initialize;
 void
 lat_mem_rd()
 {
-	int	i;
-	int	c;
 	int	parallel = 1;
 	int	warmup = 0;
 	int	repetitions = -1;
         size_t	len;
 	size_t	range;
-	size_t	stride;
-//    char   *usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>] [-t] len [stride...]\n";
-
-//	while (( c = getopt(ac, av, "tP:W:N:")) != EOF) {
-//		switch(c) {
-//		case 't':
-//			fpInit = thrash_initialize;
-//			break;
-//		case 'P':
-//			parallel = atoi(optarg);
-//			if (parallel <= 0) lmbench_usage(ac, av, usage);
-//			break;
-//		case 'W':
-//			warmup = atoi(optarg);
-//			break;
-//		case 'N':
-//			repetitions = atoi(optarg);
-//			break;
-//		default:
-//			lmbench_usage(ac, av, usage);
-//			break;
-//		}
-//	}
-//	if (optind == ac) {
-//		lmbench_usage(ac, av, usage);
-//	}
-
-    len = 64;//atoi(av[optind]);
+    len = 64;
 	len *= 1024 * 1024;
 
-//	if (optind == ac - 1) {
-		fprintf(stderr, "\"stride=%d\n", (int)STRIDE);
-		for (range = LOWER; range <= len; range = step(range)) {
-			loads(len, range, STRIDE, parallel, 
-			      warmup, repetitions);
-		}
-//	} else {
-//		for (i = optind + 1; i < ac; ++i) {
-//			stride = bytes(av[i]);
-//			fprintf(stderr, "\"stride=%d\n", (int)stride);
-//			for (range = LOWER; range <= len; range = step(range)) {
-//				loads(len, range, stride, parallel, 
-//				      warmup, repetitions);
-//			}
-//			fprintf(stderr, "\n");
-//		}
-//	}
+    fprintf(stderr, "\"stride=%d\n", (int)STRIDE);
+    for (range = LOWER; range <= len; range = step(range)) {
+        loads(len, range, STRIDE, parallel,
+              warmup, repetitions);
+    }
 	return;
 }
 
@@ -148,7 +107,7 @@ loads(size_t len, size_t range, size_t stride,
 	/* We want to get to nanoseconds / load. */
 	save_minimum();
 	result = (1000. * (double)gettime()) / (double)(count * get_n());
-	fprintf(stderr, "%d %.3f\n", range, result);
+	fprintf(stderr, "%d %.3f\n", (int)range, result);
 
 }
 

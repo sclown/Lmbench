@@ -25,6 +25,9 @@ static char	*id = "$Id$\n";
 #define	TYPE	int
 #define	MINSZ	(sizeof(TYPE) * 128)
 
+#define KDEBUG
+#include "kdebug.h"
+
 void	*buf;		/* do the I/O here */
 size_t	xfersize;	/* do it in units of this */
 size_t	count;		/* bytes to move (can't be modified) */
@@ -40,15 +43,21 @@ static void doit(int fd)
 	size_t	size, chunk;
 
 	size = count;
+    void* ptr = buf;
 	chunk = xfersize;
 	while (size > 0) {
 		if (size < chunk) chunk = size;
-		if (read(fd, buf, MIN(size, chunk)) <= 0) {
+        KDSTART(4)
+		if (read(fd, ptr, MIN(size, chunk)) <= 0) {
 			break;
 		}
-		bread(buf, MIN(size, xfersize));
+        KDEND(4)
 		size -= chunk;
+        ptr += chunk;
 	}
+    KDSTART(5)
+    bread(buf, size);
+    KDEND(5)
 }
 
 static void
@@ -100,9 +109,11 @@ time_with_open(iter_t iterations, void * cookie)
 	int	fd;
 
 	while (iterations-- > 0) {
+        KDSTART(2);
 		fd = open(filename, O_RDONLY);
 		doit(fd);
 		close(fd);
+        KDEND(2);
 	}
 }
 
@@ -127,66 +138,35 @@ cleanup(iter_t iterations, void * cookie)
 
 	if (state->fd >= 0) close(state->fd);
 	if (state->clone) unlink(state->filename);
-//    free(state);
-//    *(void**)cookie = NULL;
 }
 
 void
-bw_file_rd_size(const char* documents, int size)
+bw_file_rd_size(const char* documents, int size, int chuncked)
 {
-	int	fd;
 	state_t state;
 	int	parallel = 1;
 	int	warmup = 0;
 	int	repetitions = -1;
-	int	c;
-//    char    usage[1024];
-	
-//    sprintf(usage,"[-C] [-P <parallelism>] [-W <warmup>] [-N <repetitions>] <size> open2close|io_only <filename>"
-//        "\nmin size=%d\n",(int) (XFERSIZE>>10)) ;
-
 	state.clone = 0;
 
-//    while (( c = getopt(ac, av, "P:W:N:C")) != EOF) {
-//        switch(c) {
-//        case 'P':
-//            parallel = atoi(optarg);
-//            if (parallel <= 0) lmbench_usage(ac, av, usage);
-//            break;
-//        case 'W':
-//            warmup = atoi(optarg);
-//            break;
-//        case 'N':
-//            repetitions = atoi(optarg);
-//            break;
-//        case 'C':
-//            state.clone = 1;
-//            break;
-//        default:
-//            lmbench_usage(ac, av, usage);
-//            break;
-//        }
-//    }
-//
-//    if (optind + 3 != ac) { /* should have three arguments left */
-//        lmbench_usage(ac, av, usage);
-//    }
 
     strcpy(state.filename, documents);
-	strcat(state.filename,"/lmbench");
+	strcat(state.filename,"/Lmbench");
 	count = bytes("1K");
     count = size;
-//    if (count < MINSZ) {
-//        exit(1);    /* I want this to be quiet */
-//    }
-	if (count < XFERSIZE) {
-		xfersize = count;
-	} else {
-		xfersize = XFERSIZE;
-	}
-	buf = (void *)valloc(XFERSIZE);
-	bzero(buf, XFERSIZE);
+    if (count < XFERSIZE) {
+        xfersize = count;
+    } else {
+        xfersize = XFERSIZE;
+    }
+    if(!chuncked) {
+        xfersize = count;
+    }
+    
+	buf = (void *)valloc(size);
+	bzero(buf, size);
 
+    KDSTART(1);
 //    {//open2close
 //        benchmp(initialize, time_with_open, cleanup,
 //                0, parallel, warmup, repetitions, &state);
@@ -196,18 +176,38 @@ bw_file_rd_size(const char* documents, int size)
                 0, parallel, warmup, repetitions, &state);
     }
 	bandwidth(count, get_n() * parallel, 1);
+    KDEND(1);
 }
 
 void
 bw_file_rd(const char* documents) {
-    bw_file_rd_size(documents, 1);
-    bw_file_rd_size(documents, 100);
-    bw_file_rd_size(documents, MINSZ);
-    bw_file_rd_size(documents, 1024);
-    bw_file_rd_size(documents, 16*1024);
-    bw_file_rd_size(documents, 64*1024);
-    bw_file_rd_size(documents, 512*1024);
-    bw_file_rd_size(documents, 1024*1024);
-    bw_file_rd_size(documents, 5*1024*1024);
+    bw_file_rd_size(documents, 1, FALSE);
+    bw_file_rd_size(documents, 100, FALSE);
+    bw_file_rd_size(documents, MINSZ, FALSE);
+    bw_file_rd_size(documents, 1024, FALSE);
+    bw_file_rd_size(documents, 5*1024, FALSE);
+    bw_file_rd_size(documents, 10*1024, FALSE);
+    bw_file_rd_size(documents, 16*1024, FALSE);
+    bw_file_rd_size(documents, 64*1024, FALSE);
+    bw_file_rd_size(documents, 512*1024, FALSE);
+    bw_file_rd_size(documents, 1024*1024, FALSE);
+    bw_file_rd_size(documents, 3*1024*1024, FALSE);
+    bw_file_rd_size(documents, 5*1024*1024, FALSE);
+    bw_file_rd_size(documents, 10*1024*1024, FALSE);
+
+
+    bw_file_rd_size(documents, 1, TRUE);
+    bw_file_rd_size(documents, 100, TRUE);
+    bw_file_rd_size(documents, MINSZ, TRUE);
+    bw_file_rd_size(documents, 1024, TRUE);
+    bw_file_rd_size(documents, 5*1024, TRUE);
+    bw_file_rd_size(documents, 10*1024, TRUE);
+    bw_file_rd_size(documents, 16*1024, TRUE);
+    bw_file_rd_size(documents, 64*1024, TRUE);
+    bw_file_rd_size(documents, 512*1024, TRUE);
+    bw_file_rd_size(documents, 1024*1024, TRUE);
+    bw_file_rd_size(documents, 3*1024*1024, TRUE);
+    bw_file_rd_size(documents, 5*1024*1024, TRUE);
+    bw_file_rd_size(documents, 10*1024*1024, TRUE);
 }
 

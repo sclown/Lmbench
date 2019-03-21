@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		574B256B20FAAB2700E1B835 /* lat_ctx_random.c in Sources */ = {isa = PBXBuildFile; fileRef = 574B256A20FAAB2700E1B835 /* lat_ctx_random.c */; };
 		AD00E9C71F5488380057A812 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AD00E9C61F5488380057A812 /* main.m */; };
 		AD00E9CA1F5488380057A812 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AD00E9C91F5488380057A812 /* AppDelegate.m */; };
 		AD00E9CD1F5488380057A812 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AD00E9CC1F5488380057A812 /* ViewController.m */; };
@@ -30,6 +31,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		574B256A20FAAB2700E1B835 /* lat_ctx_random.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lat_ctx_random.c; sourceTree = "<group>"; };
+		57A33F0620FD3B1C00130FAD /* kdebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kdebug.h; sourceTree = "<group>"; };
 		AD00E9C21F5488370057A812 /* lmbench.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lmbench.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD00E9C61F5488380057A812 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AD00E9C81F5488380057A812 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -90,19 +93,21 @@
 			children = (
 				AD00E9C81F5488380057A812 /* AppDelegate.h */,
 				AD00E9C91F5488380057A812 /* AppDelegate.m */,
-				AD9B5E131F7BCDF700BED3DE /* lat_fs.c */,
+				AD9B5E0F1F7AD66F00BED3DE /* bw_file_rd.c */,
 				ADDD6F281FA8EE50004855AE /* bw_mem.c */,
+				AD9B5E131F7BCDF700BED3DE /* lat_fs.c */,
 				ADDD6F211FA76C67004855AE /* lat_thread.c */,
 				AD9B5E1A1F7D229000BED3DE /* lat_sem.c */,
+				574B256A20FAAB2700E1B835 /* lat_ctx_random.c */,
 				ADBFF36220B1DB870026720D /* lat_array.m */,
 				ADBFF36420B2231D0026720D /* lat_string.m */,
 				AD9B5E111F7BC2B100BED3DE /* lat_ops.c */,
-				AD9B5E0F1F7AD66F00BED3DE /* bw_file_rd.c */,
 				AD00E9DC1F54889F0057A812 /* lat_mem_rd.c */,
 				AD048BFC1F7187ED009A7750 /* lat_ctx.c */,
 				AD00E9E41F548E8C0057A812 /* lib_sched.c */,
 				AD00E9DE1F548BD60057A812 /* lib_mem.c */,
 				AD00E9E01F548CC20057A812 /* lib_timing.c */,
+				57A33F0620FD3B1C00130FAD /* kdebug.h */,
 				AD00E9E21F548E070057A812 /* getopt.c */,
 				AD00E9CB1F5488380057A812 /* ViewController.h */,
 				AD00E9CC1F5488380057A812 /* ViewController.m */,
@@ -203,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				574B256B20FAAB2700E1B835 /* lat_ctx_random.c in Sources */,
 				AD9B5E1B1F7D229100BED3DE /* lat_sem.c in Sources */,
 				AD00E9CD1F5488380057A812 /* ViewController.m in Sources */,
 				AD00E9E51F548E8C0057A812 /* lib_sched.c in Sources */,

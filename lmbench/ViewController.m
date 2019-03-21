@@ -10,12 +10,15 @@
 
 @interface ViewController ()
 
+@property (strong) IBOutlet UILabel* label;
+
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.label.text = @"Completed";
     // Do any additional setup after loading the view, typically from a nib.
 }
 

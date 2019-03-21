@@ -16,6 +16,7 @@ static char	*id = "$Id$\n";
 #include <sys/sem.h>
 #include <dispatch/dispatch.h>
 #include <pthread.h>
+#include <sys/kdebug_signpost.h>
 
 static void initialize(iter_t iterations, void *cookie);
 static void cleanup(iter_t iterations, void *cookie);
@@ -35,31 +36,6 @@ lat_sem()
 	int parallel = 1;
 	int warmup = 0;
 	int repetitions = -1;
-	int c;
-//    char* usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>]\n";
-//
-//    while (( c = getopt(ac, av, "P:W:N:")) != EOF) {
-//        switch(c) {
-//        case 'P':
-//            parallel = atoi(optarg);
-//            if (parallel <= 0) lmbench_usage(ac, av, usage);
-//            break;
-//        case 'W':
-//            warmup = atoi(optarg);
-//            break;
-//        case 'N':
-//            repetitions = atoi(optarg);
-//            break;
-//        default:
-//            lmbench_usage(ac, av, usage);
-//            break;
-//        }
-//    }
-//    if (optind < ac) {
-//        lmbench_usage(ac, av, usage);
-//    }
-
-
 	benchmp(initialize, doit, cleanup, SHORT, parallel, 
 		warmup, repetitions, &state);
 	micro("Semaphore latency", get_n() * 2);
@@ -68,8 +44,6 @@ lat_sem()
 static void
 initialize(iter_t iterations, void* cookie)
 {
-	char	c;
-
 	if (iterations) return;
     
     state_t * state = (state_t *)(*(void**)cookie);
@@ -100,8 +74,10 @@ doit(register iter_t iterations, void *cookie)
 {
     state_t * state = (state_t *)(*(void**)cookie);
 	while (iterations-- > 0) {
+        kdebug_signpost_start(9,0,0,0,9);
         dispatch_semaphore_wait(state->sem2, DISPATCH_TIME_FOREVER);
         dispatch_semaphore_signal(state->sem1);
+        kdebug_signpost_end(9,0,0,0,9);
 	}
 }
 

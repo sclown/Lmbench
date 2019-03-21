@@ -13,7 +13,8 @@ static char    *id = "$Id$\n";
 
 #include "bench.h"
 #include <pthread.h>
-#include <sys/kdebug_signpost.h>
+#define KDEBUG
+#include "kdebug.h"
 
 #define	MAXPROC	2048
 #define	CHUNK	(4<<10)
@@ -63,16 +64,18 @@ lat_ctx()
 	}
 
     int offset = 0;
-    for(process_size = 0*1024;process_size < 10*1024*1024; process_size+=offset) {
-        offset += 32*1024;
+    for(process_size = 0*1024;process_size < 10*1024*1024; process_size+=offset)
+    {
+    
+    offset += 32*1024;
     int cores = 1;
 	state.procs = cores;
-    state.process_size = process_size;
+    state.process_size = 32*1024;
     state.overhead = 0.0;
     state.tids = NULL;
     state.index = 0;
 
-    kdebug_signpost(1,0,0,0,0);
+    KDSTART(1)
     benchmp(initialize_overhead, benchmark_overhead, cleanup_overhead, 0, parallel,
             warmup, repetitions, &state);
 	if (gettime() == 0) return;
@@ -80,27 +83,23 @@ lat_ctx()
 	state.overhead /= get_n();
 	fprintf(stderr, "\n\"size=%dk ovr=%.2f mks\n", 
 		state.process_size/1024, state.overhead);
-    kdebug_signpost(2,0,0,0,0);
+    KDEND(1)
 
     state.procs = maxprocs;
-    kdebug_signpost_start(6,0,0,0,6);
+    KDSTART(2)
     benchmp(initialize, benchmark, cleanup, 0, parallel,
             warmup, repetitions, &state);
-    kdebug_signpost_end(6,0,0,0,6);
+    KDEND(2)
     
     time = gettime();
     time /= get_n();
     time /= state.procs;
     time -= state.overhead;
     
-    //        if (time > 0.0)
     fprintf(stderr, "%d %.2f mks\n", state.procs, time);
-    kdebug_signpost(3,0,0,0,0);
 
     }
 
-
-//    }
 }
 
 static void
@@ -159,6 +158,7 @@ benchmark_overhead(iter_t iterations, void* cookie)
 
 
 	while (iterations-- > 0) {
+        KDSTART(3)
 		if (write((pState->p + 2 * i)[1], &msg, sizeof(msg)) != sizeof(msg)) {
 			/* perror("read/write on pipe"); */
 			exit(1);				
@@ -171,13 +171,14 @@ benchmark_overhead(iter_t iterations, void* cookie)
 			i = 0;
 		}
 		bread(pState->data, pState->process_size);
+        KDEND(3)
 	}
 }
 
 static void
 initialize(iter_t iterations, void* cookie)
 {
-    kdebug_signpost(7,0,0,0,7);
+    KDSIGN(7)
 	int procs;
 
 	if (iterations) return;
@@ -190,7 +191,7 @@ initialize(iter_t iterations, void* cookie)
 		exit(1);
 	bzero((void*)pState->tids, pState->procs * sizeof(pthread_t));
 	procs = create_daemons(pState);
-    kdebug_signpost(5,0,0,0,5);
+    KDSIGN(5)
 
 	if (procs < pState->procs) {
 		cleanup(0, cookie);
@@ -201,7 +202,7 @@ initialize(iter_t iterations, void* cookie)
 static void
 cleanup(iter_t iterations, void* cookie)
 {
-    kdebug_signpost(8,0,0,0,8);
+    KDSIGN(8)
 	int i;
 
 	if (iterations) return;
@@ -232,8 +233,8 @@ benchmark(iter_t iterations, void* cookie)
 	 * Main process - all others should be ready to roll, time the
 	 * loop.
 	 */
-    kdebug_signpost_start(9,0,0,0,9);
 	while (iterations-- > 0) {
+        KDSTART(9)
 		if (write(pState->p[1], &msg, sizeof(msg)) !=
 		    sizeof(msg)) {
 			/* perror("read/write on pipe"); */
@@ -244,8 +245,8 @@ benchmark(iter_t iterations, void* cookie)
 			exit(1);
 		}
 		bread(pState->data, pState->process_size);
+        KDEND(9)
 	}
-    kdebug_signpost_end(9,0,0,0,9);
 }
 
 
@@ -257,33 +258,33 @@ doit(void* args)
     int i = (int)stateptr->index;
     int rd = (stateptr->p + 2 * (i - 1))[0];
     int wr = (stateptr->p + 2 * i)[1];
+    int sz = stateptr->process_size;
     free(stateptr);
     stateptr = NULL;
 	int	msg;
 	void*	data = NULL;
 
-	if (process_size) {
-		data = malloc(process_size);
+	if (sz) {
+		data = malloc(sz);
 		if (!data) {
 			perror("malloc");
 			exit(3);
 		}
-		bzero(data, process_size);
+		bzero(data, sz);
 	}
 	for ( ;; ) {
 		if (read(rd, &msg, sizeof(msg)) != sizeof(msg)) {
 			/* perror("read/write on pipe"); */
 			break;
 		}
-        kdebug_signpost(4,0,0,0,4);
-		if (process_size)
-			bread(data, process_size);
-        kdebug_signpost(5,0,0,0,0);
+        KDSTART(4)
+		if (sz)
+			bread(data, sz);
+        KDEND(4)
 		if (write(wr, &msg, sizeof(msg)) != sizeof(msg)) {
 			/* perror("read/write on pipe"); */
 			break;
 		}
-        kdebug_signpost(6,0,0,0,0);
 	}
     if (data) {
         free(data);

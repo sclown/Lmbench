@@ -6,9 +6,11 @@ static char	*id = "$Id$\n";
 
 #include "bench.h"
 
+#define KDEBUG
+#include "kdebug.h"
 
 struct _state {
-	char	*tmpdir;
+	const char	*tmpdir;
 	long	max;
 	long	n;
 	char**	names;
@@ -33,44 +35,12 @@ lat_fs(const char* documents)
 	int parallel = 1;
 	int warmup = 0;
 	int repetitions = -1;
-    static	int	sizes[] = { 0, 0, 1024, 8*1024, 8*1024*1024 };
+    static	int	sizes[] = { 0, 1024, 8*1024, 1024*1024, 8*1024*1024 };
 	struct _state state;
-	int c;
-//    char* usage = "[-s <file size>] [-n <max files per dir>] [-P <parallelism>] [-W <warmup>] [-N <repetitions>] [<dir>]\n";
 
-	state.size = 0;
+	state.size = 1024*1024;
 	state.max = 100;
 	state.tmpdir = documents;
-
-//    while (( c = getopt(ac, av, "s:n:P:W:N:")) != EOF) {
-//        switch(c) {
-//        case 's':
-//            state.size = bytes(optarg);
-//            break;
-//        case 'n':
-//            state.max = bytes(optarg);
-//            break;
-//        case 'P':
-//            parallel = atoi(optarg);
-//            if (parallel <= 0) lmbench_usage(ac, av, usage);
-//            break;
-//        case 'W':
-//            warmup = atoi(optarg);
-//            break;
-//        case 'N':
-//            repetitions = atoi(optarg);
-//            break;
-//        default:
-//            lmbench_usage(ac, av, usage);
-//            break;
-//        }
-//    }
-//    if (optind < ac - 1) {
-//        lmbench_usage(ac, av, usage);
-//    }
-//    if (optind == ac - 1) {
-//        state.tmpdir = av[1];
-//    }
 
 	if (state.size) {
 		measure(state.size, parallel, warmup, repetitions, &state);
@@ -92,7 +62,6 @@ measure(size_t size, int parallel, int warmup, int repetitions, void* cookie)
 	if (gettime()) {
 		fprintf(stderr, "\t%lu\t%.0f", (unsigned long)get_n(), 
             (double)gettime()/get_n());
-//            (double)(1000000. * get_n() / (double)gettime()));
 	} else {
 		fprintf(stderr, "\t-1\t-1");
 	}
@@ -102,7 +71,6 @@ measure(size_t size, int parallel, int warmup, int repetitions, void* cookie)
 	if (gettime()) {
 		fprintf(stderr, "\t%.0f", 
             (double)gettime()/get_n());
-//            (double)(1000000. * get_n() / (double)gettime()));
 	} else {
 		fprintf(stderr, "\t-1");
 	}
@@ -177,7 +145,7 @@ setup_names(iter_t iterations, void* cookie)
 
 	state->names = (char**)malloc(iterations * sizeof(char*));
 	state->dirs = (char**)malloc(state->ndirs * sizeof(char*));
-	if (iterations && !state->names || state->ndirs && !state->dirs) {
+	if ((iterations && !state->names) || (state->ndirs && !state->dirs)) {
 		perror("malloc");
 		exit(1);
 	}
@@ -202,7 +170,7 @@ setup_names(iter_t iterations, void* cookie)
 	state->dirs[0] = dirname;
 	foff = 0;
 	doff = 0;
-	setup_names_recurse(&foff, &doff, depth, state);
+	setup_names_recurse(&foff, &doff, (int)depth, state);
 	if (foff != iterations || doff != state->ndirs - 1) {
 		fprintf(stderr, "setup_names: ERROR: foff=%lu, iterations=%lu, doff=%lu, ndirs=%lu, depth=%ld\n", (unsigned long)foff, (unsigned long)iterations, (unsigned long)doff, (unsigned long)state->ndirs, depth);
 	}
@@ -212,7 +180,6 @@ void
 cleanup_names(iter_t iterations, void* cookie)
 {
 	long	i;
-//    struct _state* state = (struct _state*)cookie;
     struct _state* state = (struct _state*)(*(void**)cookie);
 
 	if (!iterations) return;
@@ -231,8 +198,6 @@ cleanup_names(iter_t iterations, void* cookie)
 	}
 	free(state->dirs);
 	state->ndirs = 0;
-//    free(state);
-//    *(void**)cookie = NULL;
 }
 
 void
@@ -256,30 +221,32 @@ cleanup_mk(iter_t iterations, void* cookie)
 void
 benchmark_mk(iter_t iterations, void* cookie)
 {
-//    struct _state* state = (struct _state*)cookie;
     struct _state* state = (struct _state*)(*(void**)cookie);
 
 	while (iterations-- > 0) {
+        KDSTART(3)
 		if (!state->names[iterations]) {
 			fprintf(stderr, "benchmark_mk: null filename at %lu of %lu\n", iterations, state->n);
 			continue;
 		}
 		mkfile(state->names[iterations], state->size);
+        KDEND(3)
 	}
 }
 
 void
 benchmark_rm(iter_t iterations, void* cookie)
 {
-//    struct _state* state = (struct _state*)cookie;
     struct _state* state = (struct _state*)(*(void**)cookie);
 
 	while (iterations-- > 0) {
+        KDSTART(4)
 		if (!state->names[iterations]) {
 			fprintf(stderr, "benchmark_rm: null filename at %lu of %lu\n", iterations, state->n);
 			continue;
 		}
 		unlink(state->names[iterations]);
+        KDEND(4)
 	}
 }
 

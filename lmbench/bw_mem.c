@@ -64,58 +64,9 @@ bw_mem_size(int nbytes)
 	int	warmup = 0;
 	int	repetitions = -1;
 	state_t	state;
-//    int    c;
-//    char    *usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>] <size> what [conflict]\nwhat: rd wr rdwr cp fwr frd fcp bzero bcopy\n<size> must be larger than 512";
-//
-//
-//    while (( c = getopt(ac, av, "P:W:N:")) != EOF) {
-//        switch(c) {
-//        case 'P':
-//            parallel = atoi(optarg);
-//            if (parallel <= 0) lmbench_usage(ac, av, usage);
-//            break;
-//        case 'W':
-//            warmup = atoi(optarg);
-//            break;
-//        case 'N':
-//            repetitions = atoi(optarg);
-//            break;
-//        default:
-//            lmbench_usage(ac, av, usage);
-//            break;
-//        }
-//    }
-
-	/* should have two, possibly three [indicates align] arguments left */
-//    state.aligned = state.need_buf2 = 0;
-//    if (optind + 3 == ac) {
-//        state.aligned = 1;
-//    } else if (optind + 2 != ac) {
-//        lmbench_usage(ac, av, usage);
-//    }
-//
-//    nbytes = state.nbytes = bytes(av[optind]);
-//    if (state.nbytes < 512) { /* this is the number of bytes in the loop */
-//        lmbench_usage(ac, av, usage);
-//    }
-//
-//    if (streq(av[optind+1], "cp") ||
-//        streq(av[optind+1], "fcp") || streq(av[optind+1], "bcopy")) {
-//        state.need_buf2 = 1;
-//    }
-		
     state.overhead = 0;
     state.aligned = state.need_buf2 = 0;
     state.nbytes = nbytes;
-//    nbytes = state.nbytes = 30*1024;
-//    nbytes = state.nbytes = 40*1024;
-//    nbytes = state.nbytes = 50*1024;
-//    nbytes = state.nbytes = 300*1024;
-//    nbytes = state.nbytes = 400*1024;
-//    nbytes = state.nbytes = 500*1024;
-//    nbytes = state.nbytes = 3*1024*1024;
-//    nbytes = state.nbytes = 4*1024*1024;
-//    nbytes = state.nbytes = 5*1024*1024;
 
     benchmp(init_loop, rd, cleanup, 0, parallel,
         warmup, repetitions, &state);
@@ -165,50 +116,17 @@ bw_mem_size(int nbytes)
 
     adjusted_bandwidth(gettime(), nbytes,
                        get_n() * parallel, state_copy2.overhead);
-
-//    if (streq(av[optind+1], "rd")) {
-//        benchmp(init_loop, rd, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else if (streq(av[optind+1], "wr")) {
-//        benchmp(init_loop, wr, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else if (streq(av[optind+1], "rdwr")) {
-//        benchmp(init_loop, rdwr, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else if (streq(av[optind+1], "cp")) {
-//        benchmp(init_loop, mcp, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else if (streq(av[optind+1], "frd")) {
-//        benchmp(init_loop, frd, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else if (streq(av[optind+1], "fwr")) {
-//        benchmp(init_loop, fwr, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else if (streq(av[optind+1], "fcp")) {
-//        benchmp(init_loop, fcp, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else if (streq(av[optind+1], "bzero")) {
-//        benchmp(init_loop, loop_bzero, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else if (streq(av[optind+1], "bcopy")) {
-//        benchmp(init_loop, loop_bcopy, cleanup, 0, parallel,
-//            warmup, repetitions, &state);
-//    } else {
-//        lmbench_usage(ac, av, usage);
-//    }
-//    adjusted_bandwidth(gettime(), nbytes,
-//               get_n() * parallel, state.overhead);
 }
 
 void
 bw_mem()
 {
-//    bw_mem_size(30*1024);
-//    bw_mem_size(40*1024);
-//    bw_mem_size(50*1024);
-//    bw_mem_size(300*1024);
-//    bw_mem_size(400*1024);
-//    bw_mem_size(500*1024);
+    bw_mem_size(30*1024);
+    bw_mem_size(40*1024);
+    bw_mem_size(50*1024);
+    bw_mem_size(300*1024);
+    bw_mem_size(400*1024);
+    bw_mem_size(500*1024);
     bw_mem_size(5*1024*1024);
     bw_mem_size(10*1024*1024);
     bw_mem_size(20*1024*1024);

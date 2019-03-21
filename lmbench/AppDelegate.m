@@ -11,6 +11,7 @@
 
 void bw_file_rd(const char*);
 void lat_fs(const char*);
+void lat_ctx_random();
 void lat_ctx();
 void lat_thread();
 void lat_sem();
@@ -34,23 +35,16 @@ void lat_string(const char*);
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0]; // Get documents folder
     
-    NSString *unreserved = @"-._~";
-    NSMutableCharacterSet *allowed = [NSMutableCharacterSet alphanumericCharacterSet];
-    [allowed addCharactersInString:unreserved];
-    
-    __auto_type stringUrl = [@"http://icq.com/привет/урлик" stringByAddingPercentEncodingWithAllowedCharacters:allowed];
-    NSURL *url = [NSURL URLWithString:stringUrl];
-
 //    lat_mem_rd();
-//    lat_sem();
 //    lat_fs([documentsDirectory UTF8String]);
 //    bw_file_rd([documentsDirectory UTF8String]);
 //    lat_ops();
 //    bw_mem();
 
-    
 //    lat_thread();
-        lat_ctx();
+    lat_ctx();
+//    lat_ctx_random();
+//    lat_sem();
 //    lat_array();
 //    lat_string([documentsDirectory UTF8String]);
     return YES;

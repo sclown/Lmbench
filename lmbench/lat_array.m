@@ -23,6 +23,8 @@ typedef struct _state {
     CFMutableArrayRef array;
 } state_t;
 
+static int arraysize = 0;
+
 void
 lat_array()
 {
@@ -30,34 +32,12 @@ lat_array()
 	int parallel = 1;
 	int warmup = 0;
 	int repetitions = -1;
-	int c;
-//    char* usage = "[-P <parallelism>] [-W <warmup>] [-N <repetitions>]\n";
-//
-//    while (( c = getopt(ac, av, "P:W:N:")) != EOF) {
-//        switch(c) {
-//        case 'P':
-//            parallel = atoi(optarg);
-//            if (parallel <= 0) lmbench_usage(ac, av, usage);
-//            break;
-//        case 'W':
-//            warmup = atoi(optarg);
-//            break;
-//        case 'N':
-//            repetitions = atoi(optarg);
-//            break;
-//        default:
-//            lmbench_usage(ac, av, usage);
-//            break;
-//        }
-//    }
-//    if (optind < ac) {
-//        lmbench_usage(ac, av, usage);
-//    }
+    for(arraysize=1000; arraysize <= 10000; arraysize += 1000) {
+        benchmp(initialize, doit, cleanup, SHORT, parallel,
+                warmup, repetitions, &state);
+        micro("Add object", get_n());
+    }
 
-
-	benchmp(initialize, doit, cleanup, SHORT, parallel, 
-		warmup, repetitions, &state);
-	micro("Add object", get_n());
 }
 
 static void
@@ -68,7 +48,7 @@ initialize(iter_t iterations, void* cookie)
         NSMutableArray *array = (__bridge NSMutableArray*)state->array;
         for(int i=0; i<iterations;++i) {
             NSMutableArray *sub = [NSMutableArray new];
-            for(int j=0; j<9000; ++j) {
+            for(int j=0; j<arraysize; ++j) {
                 [sub addObject:@(rand())];
             }
             [array addObject:sub];
